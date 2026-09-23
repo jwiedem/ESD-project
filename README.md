@@ -1,0 +1,4 @@
+# Humble beginnings
+We started our journey of working on the nRF52833 by loading one of the sample projects for the board blinky. We went through the code to understand how it and the device trees worked.
+Once we understood how the code interacted with the device tree specifications we made our first changes to the code:
+First we made the LED toggleable with Button 1. Since the code checked the button and toggled the LED every loop with a minimal delay of 100ms, when the button was pressed too long, the LED would start blinking on and off. To prevent this, we used interrupts to call the toggle function only once on GPIO_INT_EDGE_TO_ACTIVE, so it only triggers when the button is initially set to active.
