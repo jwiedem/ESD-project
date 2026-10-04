@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/drivers/spi.h>
+#include <zephyr/sys/printk.h>
 
 #define LED0_NODE DT_ALIAS(led0)
 #define SW0_NODE  DT_ALIAS(sw0)
@@ -11,17 +13,29 @@ static const struct gpio_dt_spec led =
 static const struct gpio_dt_spec button =
 	GPIO_DT_SPEC_GET(SW0_NODE, gpios);
 
+static struct k_work_delayable button_work;
+
 static struct gpio_callback button_cb_data;
 
-void button_pressed(const struct device *dev,
-		    struct gpio_callback *cb,
-		    uint32_t pins)
+static uint8_t led_state = 0;
+
+void button_pressed()
 {
-	gpio_pin_toggle_dt(&led);
+  k_work_reschedule(&button_work, K_MSEC(30));
+}
+
+void led_work_handler(struct k_work *work)
+{
+  led_state = !led_state;
+	gpio_pin_set_dt(&led, led_state);
+
+  printk("LED state: %d", led_state);
 }
 
 int main(void)
 {
+  k_work_init_delayable(&button_work, led_work_handler);
+
 	int ret;
 
 	if (!gpio_is_ready_dt(&led)) {
@@ -63,7 +77,8 @@ int main(void)
 	);
 
 	while (1) {
-		k_sleep(K_FOREVER);
+    printk("LED state: %d\n", led_state);
+		k_sleep(K_MSEC(1000));
 	}
 
 	return 0;
