@@ -6,11 +6,43 @@
  * File name matters: Zephyr auto-applies boards/<board>_<soc>.overlay, and our
  * board target is nrf52833dk/nrf52833 (slash -> underscore) => this file name.
  */
+/ {
+    chosen {
+        zephyr,display = &oled;
+    };
+};
+
 &arduino_i2c {
 	status = "okay";
 
 	bmp280@76 {
 		compatible = "bosch,bme280";  /* Zephyr's driver for BOTH BMP280 and BME280 */
 		reg = <0x76>;                 /* 0x76 if SDO->GND, 0x77 if SDO->3V3 */
+	};
+};
+&spi1 {
+    status = "disabled";
+};
+
+&i2c1 {
+    status = "okay";
+    clock-frequency = <100000>;
+
+	oled: ssd1306@3c {
+		compatible = "solomon,ssd1306";
+		status = "okay";
+		reg = <0x3c>;
+
+		width = <128>;
+		height = <64>;
+
+		segment-offset = <0>;
+		page-offset = <0>;
+		display-offset = <0>;
+		multiplex-ratio = <63>;
+
+		segment-remap;
+		com-invdir;
+		prechargep = <0x22>;
 	};
 };
