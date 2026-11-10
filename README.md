@@ -26,7 +26,7 @@ We then moved the reading out of the main loop and made it a periodic task, and 
 
 # Session 4:
 
-In this session our goal was to display the sensor values onto an OLED display. We looked up our specific OLED device, and found the respective zephyr driver to use, specifically the ssd1306 128x64 OLED display. Next we wanted to set up a second i2c line, namely i2c1. We connected the OLED's SDA to P0.30 and SCL to P0.31 as per the technical documentation. In order to enable i2c1 in the devicetree, we needed to disable the spi1 interface, as they share the same pins in the standard devicetree configuration for the board. We used zephyr's internal character frame buffer library to initialize the display and write to it.
+In this session our goal was to display the sensor values onto an OLED display. We looked up our specific OLED device, and found the respective zephyr driver to use, specifically the ssd1306 128x64 OLED display. Next we wanted to set up a second i2c line, namely i2c1. We connected the OLED's SDA to P0.30 and SCL to P0.31 and VCC to 3.3V as per the technical documentation. In order to enable i2c1 in the devicetree, we needed to disable the spi1 interface, as they share the same pins in the standard devicetree configuration for the board. We used zephyr's internal character frame buffer library to initialize the display and write to it.
 We also refactored the code and adapted it to use a **queue** to put the sensor values into the temperature queue and then writing it from the queue to the display once the data has been received. This occurs at an interval of every 2 seconds.
 
 
