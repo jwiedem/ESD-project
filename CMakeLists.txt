@@ -3,4 +3,8 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(project)
 
-target_sources(app PRIVATE src/main.c src/button.c src/sensor.c src/oled.c)
+file(GLOB APP_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c"
+)
+
+target_sources(app PRIVATE ${APP_SOURCES})

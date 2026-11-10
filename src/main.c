@@ -2,9 +2,14 @@
 #include <zephyr/drivers/gpio.h>
 #include <stdio.h>
 
+#include <zephyr/bluetooth/bluetooth.h>
+#include <bluetooth/services/nus.h>
+
+#include <errno.h>
 #include "button.h"
 #include "sensor.h"
 #include "oled.h"
+#include "ble.h"
 
 
 static const struct gpio_dt_spec leds[] = {
@@ -46,6 +51,12 @@ int main(void)
 		return 0;
 	}
 
+	err = ble_init();
+	if (err < 0) {
+		printk("BLE initialization failed: %d\n", err);
+		return 0;
+	}
+
 	struct sensor_value temperature;
 	char text[32];
 
@@ -68,6 +79,11 @@ int main(void)
 		err = write_oled(text);
 		if (err < 0) {
 			printk("OLED write failed: %d\n", err);
+		}
+
+		err = ble_send_text(text);
+		if (err < 0 && err != -EAGAIN) {
+			printk("BLE send failed: %d\n", err);
 		}
 	}
 

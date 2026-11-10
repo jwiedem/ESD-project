@@ -22,7 +22,7 @@ static void read_sensor(void)
 		return;
 	}
 
-	printk("temp: %d.%02d C\n", temp.val1, temp.val2);
+	//printk("temp: %d.%02d C\n", temp.val1, temp.val2);
 
 	err = k_msgq_put(&temp_queue, &temp, K_NO_WAIT);
 	if (err != 0) {
